@@ -1,4 +1,16 @@
-#define _GNU_SOURCE
+// reverse.c (OSTEP warm-up project)
+//
+// Reverses the order of input lines.
+// Usage:
+//   ./reverse
+//   ./reverse input.txt
+//   ./reverse input.txt output.txt
+//
+// Implementation notes:
+// - Uses getline() to support arbitrarily long lines.
+// - Stores each line in dynamically allocated memory so it can print in reverse.
+// - On errors prints exact required messages to stderr and exits with code 1.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +32,12 @@ static void die_cannot_open(const char *fname) {
 }
 
 int main(int argc, char *argv[]) {
+    // Argument handling:
+    //  - no args: read from stdin, write to stdout
+    //  - one arg: read from input file, write to stdout
+    //  - two args: read input file, write to output file (must differ)
+    //  - more args: print usage error
+
     FILE *in = NULL;
     FILE *out = NULL;
 
@@ -75,6 +93,9 @@ int main(int argc, char *argv[]) {
 
         if (n == cap) {
             size_t new_cap = cap * 2;
+        // Grow the lines array when needed (file can be very long).
+        // realloc may fail; handle it as required.
+
             char **tmp = (char **)realloc(lines, new_cap * sizeof(char *));
             if (!tmp) die_malloc();
             lines = tmp;
